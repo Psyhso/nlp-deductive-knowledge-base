@@ -92,8 +92,9 @@ def _nonstandard_constant(value: str) -> None:
 
 
 class _Validator:
-    def __init__(self, source: str | None) -> None:
+    def __init__(self, source: str | None, citation_warnings: list[dict] | None = None) -> None:
         self.normalized_source = _normalize_quote(source) if source is not None else None
+        self.citation_warnings = citation_warnings
         self.sorts: dict[str, dict] = {}
         self.predicates: dict[str, dict] = {}
         self.entities: dict[str, dict] = {}
@@ -102,10 +103,16 @@ class _Validator:
     def quote(self, value: Any, path: str) -> str:
         quote = _string(value, path, 30_000)
         if self.normalized_source is not None and _normalize_quote(quote) not in self.normalized_source:
-            raise LogicValidationError(
+            message = (
                 f"{path}: цитата отсутствует в исходном тексте "
                 "даже без учёта регистра, пробелов и типографики."
             )
+            if self.citation_warnings is None:
+                raise LogicValidationError(message)
+            self.citation_warnings.append({
+                "code": "citation_mismatch", "path": path, "quote": quote,
+                "message": "Цитата не найдена в исходном тексте. Модель могла сократить или пересказать фразу.",
+            })
         return quote
 
     def quotes(self, value: Any, path: str) -> list[str]:
@@ -302,11 +309,17 @@ class _Validator:
         return result
 
 
-def validate_bundle(raw: str | dict, source: str) -> dict:
-    """Проверить структуру, замкнутость, сорта и цитаты с допуском форматирования."""
+def validate_bundle(
+    raw: str | dict, source: str, *, citation_warnings: list[dict] | None = None,
+) -> dict:
+    """Проверить структуру, замкнутость, сорта и цитаты с допуском форматирования.
+
+    Если передан список citation_warnings, несовпадения цитат записываются
+    в него вместо исключения. Структура и формулы проверяются строго всегда.
+    """
     if not isinstance(source, str):
         raise LogicValidationError("source: требуется исходный текст.")
-    return _Validator(source).bundle(raw)
+    return _Validator(source, citation_warnings).bundle(raw)
 
 
 class _Formatter:

@@ -109,11 +109,40 @@
     if (!proposals.length) empty(target, "Дополнительных определений и допущений не предложено.");
     updateAcceptLabel();
   }
+  function renderCitationWarnings(warnings) {
+    show($("g-citation-warning"), warnings.length > 0);
+    show($("g-result-citation-warning"), warnings.length > 0);
+    $("g-citation-warning-count").textContent = fmt(warnings.length);
+    const target = $("g-citation-warning-list"); clear(target);
+    for (const warning of warnings) {
+      const match = /^(premises|entities|unparsed)\[(\d+)\]/.exec(warning.path || "");
+      let label = "Фрагмент из ответа модели";
+      if (match) {
+        const item = state.preview?.[match[1]]?.[Number(match[2])];
+        if (match[1] === "premises") label = "Посылка " + (item?.id || Number(match[2]) + 1);
+        else if (match[1] === "entities") label = "Объект «" + (item?.label || item?.id || Number(match[2]) + 1) + "»";
+        else label = "Неформализованный фрагмент " + (Number(match[2]) + 1);
+      }
+      const card = node("div", "general-citation-item");
+      card.append(node("strong", "", label), node("p", "general-evidence", "«" + warning.quote + "»"));
+      target.append(card);
+    }
+  }
   function renderFormalization(preview) {
     renderVocabulary(preview);
+    const warnings = state.result?.citation_warnings || [];
+    renderCitationWarnings(warnings);
     const premises = preview.premises || [], proposals = preview.proposals || [], queries = preview.queries || [];
     $("g-premise-count").textContent = fmt(premises.length); $("g-proposal-count").textContent = fmt(proposals.length); $("g-query-count").textContent = fmt(queries.length);
-    clear($("g-premises")); for (const premise of premises) $("g-premises").append(formulaCard(premise));
+    clear($("g-premises"));
+    for (const [index, premise] of premises.entries()) {
+      const card = formulaCard(premise);
+      if (warnings.some((warning) => (warning.path || "").startsWith(`premises[${index}].evidence[`))) {
+        card.classList.add("has-citation-warning");
+        card.firstElementChild.append(node("span", "general-citation-badge", "Проверьте цитату"));
+      }
+      $("g-premises").append(card);
+    }
     if (!premises.length) empty($("g-premises"), "Исходных посылок пока нет.");
     renderProposals(proposals);
     clear($("g-query-preview")); for (const query of queries) $("g-query-preview").append(formulaCard(query, true));

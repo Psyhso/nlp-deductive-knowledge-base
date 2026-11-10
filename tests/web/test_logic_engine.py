@@ -495,7 +495,38 @@ class LogicValidationTests(unittest.TestCase):
         self.data["entities"][0]["mentions"] = ["анна"]
         self.data["premises"][0]["evidence"] = ['АННА ПРОЧИТАЛА "Аи\u0306болит" – И ВЫСТУПИЛА.']
         self.data["unparsed"] = [{"text": "неизвестно, читала ли ольга.", "reason": "unknown"}]
-        self.assertEqual(validate_bundle(self.data, source), self.data)
+        warnings = []
+        self.assertEqual(validate_bundle(self.data, source, citation_warnings=warnings), self.data)
+        self.assertEqual(warnings, [])
+
+    def test_citation_warnings_collect_all_mismatches_without_rewriting_them(self):
+        self.data["entities"][0]["mentions"] = ["Борис"]
+        self.data["premises"][0]["evidence"] = ["Такого утверждения не было."]
+        self.data["unparsed"] = [{"text": "выдуманный фрагмент", "reason": "unknown"}]
+        warnings = []
+        result = validate_bundle(self.data, self.source, citation_warnings=warnings)
+        self.assertEqual(result, self.data)
+        self.assertEqual([w["path"] for w in warnings], [
+            "entities[0].mentions[0]", "premises[0].evidence[0]", "unparsed[0].text",
+        ])
+        self.assertEqual([w["quote"] for w in warnings], [
+            "Борис", "Такого утверждения не было.", "выдуманный фрагмент",
+        ])
+        self.assertTrue(all(w["code"] == "citation_mismatch" and w["message"] for w in warnings))
+
+    def test_citation_warning_mode_still_rejects_invalid_structure_and_formulas(self):
+        invalid = []
+        for formula in ({"op": "execute", "code": "exit()"}, atom("p", var("x")), atom("p", ent("missing"))):
+            data = deepcopy(self.data)
+            data["premises"][0]["formula"] = formula
+            invalid.append(data)
+        for quote in (42, "", " " * 10):
+            data = deepcopy(self.data)
+            data["premises"][0]["evidence"] = [quote]
+            invalid.append(data)
+        for data in invalid:
+            with self.subTest(data=data), self.assertRaises(LogicValidationError):
+                validate_bundle(data, self.source, citation_warnings=[])
 
     def test_quote_normalization_preserves_words_negation_and_numbers(self):
         source = "Анна не прочитала книгу за 0,5 часа."

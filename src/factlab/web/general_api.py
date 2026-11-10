@@ -69,11 +69,13 @@ def normalize_json(raw: str) -> str:
     return match.group(1).strip() if match else raw
 
 
-def validate_output(raw: str, source: str) -> dict:
+def validate_output(raw: str, source: str) -> tuple[dict, list[dict]]:
     if len(raw) > MAX_BUNDLE_CHARS:
         raise GeneralProblem('bundle_too_large', 'Формализация превышает допустимый размер.')
     try:
-        return validate_bundle(normalize_json(raw), source)
+        warnings: list[dict] = []
+        bundle = validate_bundle(normalize_json(raw), source, citation_warnings=warnings)
+        return bundle, warnings
     except ValueError as error:
         raise GeneralProblem('invalid_formalization', str(error), raw_output=raw) from error
 
@@ -90,12 +92,14 @@ def preview_bundle(bundle: dict) -> dict:
 
 
 def response_payload(bundle: dict, source: str, *, report: dict | None = None,
-                     usage: dict | None = None, model: str = '', demo: bool = False) -> dict:
+                     usage: dict | None = None, model: str = '', demo: bool = False,
+                     citation_warnings: list[dict] | None = None) -> dict:
     return {
         'source_text': source, 'bundle': bundle,
         'raw_json': json.dumps(bundle, ensure_ascii=False, indent=2),
         'preview': preview_bundle(bundle), 'report': report,
         'usage': usage, 'model': model, 'demo': demo,
+        'citation_warnings': citation_warnings or [],
     }
 
 
@@ -164,24 +168,26 @@ def register_general_routes(
                 settings=application.state.settings, model_override=payload.model,
             )
             try:
-                bundle = validate_output(result.raw_json, payload.text)
+                bundle, warnings = validate_output(result.raw_json, payload.text)
             except GeneralProblem as error:
                 error.status = 502
                 error.usage = result.usage
                 raise
-            return response_payload(bundle, payload.text, usage=result.usage, model=result.model)
+            return response_payload(bundle, payload.text, usage=result.usage, model=result.model,
+                                    citation_warnings=warnings)
         finally:
             application.state.gate.release()
 
     @application.post('/api/general/analyze')
     async def analyze_request(payload: AnalyzeRequest):
-        bundle = validate_output(payload.bundle_json, payload.text)
+        bundle, warnings = validate_output(payload.bundle_json, payload.text)
         report = await analyze(bundle, payload.accepted_proposal_ids)
-        return response_payload(bundle, payload.text, report=report)
+        return response_payload(bundle, payload.text, report=report, citation_warnings=warnings)
 
     @application.post('/api/general/demo')
     async def demo(payload: ExampleRequest | None = None):
         source, raw = load_example(payload.example_id if payload else 'discovery')
-        bundle = validate_output(raw, source)
+        bundle, warnings = validate_output(raw, source)
         report = await analyze(bundle, [])
-        return response_payload(bundle, source, report=report, model='Демонстрация', demo=True)
+        return response_payload(bundle, source, report=report, model='Демонстрация', demo=True,
+                                citation_warnings=warnings)

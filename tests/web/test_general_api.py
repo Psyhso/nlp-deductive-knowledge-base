@@ -77,6 +77,7 @@ class GeneralAPITests(unittest.TestCase):
         self.assertEqual(data['bundle']['queries'], [])
         self.assertEqual(data['report']['queries'], [])
         self.assertEqual(data['report']['consistency'], 'sat')
+        self.assertEqual(data['citation_warnings'], [])
         found = {
             (f['predicate'], tuple(f['args']), f['negated'])
             for f in data['report']['facts'] if f['origin'] == 'derived'
@@ -121,6 +122,43 @@ class GeneralAPITests(unittest.TestCase):
             ('speaker_list', ('maria',), False),
         })
         self.assertEqual(self.calls, [])
+
+    def test_shortened_evidence_keeps_preview_and_allows_inference_without_retry(self):
+        folder = Path(__file__).resolve().parents[1] / 'fixtures' / 'general' / 'book_club'
+        self.source = (folder / 'text.txt').read_text(encoding='utf-8')
+        self.bundle = json.loads((folder / 'bundle.json').read_text(encoding='utf-8'))
+        short_quote = 'Маша заглянула в книжный клуб как гостья.'
+        self.bundle['premises'][4]['evidence'] = [short_quote]
+        response = self.client.post('/api/general/extract', json={'text': self.source})
+        self.assertEqual(response.status_code, 200, response.text)
+        extracted = response.json()
+        self.assertIsNone(extracted['report'])
+        self.assertEqual(len(extracted['preview']['premises']), 9)
+        self.assertEqual(extracted['bundle']['premises'][4]['evidence'], [short_quote])
+        self.assertEqual(len(extracted['citation_warnings']), 1)
+        warning = extracted['citation_warnings'][0]
+        self.assertEqual(warning['code'], 'citation_mismatch')
+        self.assertEqual(warning['path'], 'premises[4].evidence[0]')
+        self.assertEqual(warning['quote'], short_quote)
+        self.assertEqual(extracted['usage']['total_tokens'], 300)
+        response = self.analyze(self.source, extracted['bundle'])
+        self.assertEqual(response.status_code, 200, response.text)
+        data = response.json()
+        self.assertEqual(data['citation_warnings'], extracted['citation_warnings'])
+        self.assertEqual(data['report']['consistency'], 'sat')
+        self.assertEqual({
+            (f['predicate'], tuple(f['args']), f['negated'])
+            for f in data['report']['facts'] if f['origin'] == 'derived'
+        }, {
+            ('prepared', ('maria',), False),
+            ('in_discussion_group', ('maria',), False),
+            ('speaker_list', ('maria',), False),
+        })
+        fixed_bundle = json.loads((folder / 'bundle.json').read_text(encoding='utf-8'))
+        fixed = self.analyze(self.source, fixed_bundle)
+        self.assertEqual(fixed.status_code, 200, fixed.text)
+        self.assertEqual(fixed.json()['citation_warnings'], [])
+        self.assertEqual(len(self.calls), 1)
 
     def test_legend_demo_checks_true_and_false_queries_and_quantifiers(self):
         response = self.client.post('/api/general/demo', json={'example_id': 'legend'})
@@ -190,17 +228,13 @@ class GeneralAPITests(unittest.TestCase):
         self.assertEqual(response.json()['usage']['total_tokens'], 123)
         self.assertEqual(len(self.calls), 1)
 
-    def test_bad_quotes_or_code_operations_are_rejected_before_solver(self):
-        for change in ('quote', 'code'):
-            with self.subTest(change=change):
-                bundle = copy.deepcopy(self.bundle)
-                if change == 'quote':
-                    bundle['premises'][0]['evidence'] = ['Несуществующая цитата.']
-                else:
-                    bundle['premises'][0]['formula'] = {'op': 'eval', 'code': 'print(1)'}
-                response = self.analyze(self.source, bundle)
-                self.assertEqual(response.status_code, 422)
-                self.assertEqual(response.json()['error']['code'], 'invalid_formalization')
+    def test_code_operations_are_rejected_even_when_citations_do_not_match(self):
+        bundle = copy.deepcopy(self.bundle)
+        bundle['entities'][0]['mentions'] = ['Несуществующее имя.']
+        bundle['premises'][0]['formula'] = {'op': 'eval', 'code': 'print(1)'}
+        response = self.analyze(self.source, bundle)
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.json()['error']['code'], 'invalid_formalization')
         self.assertEqual(self.calls, [])
 
     def test_unknown_example_and_proposal_are_not_silently_accepted(self):
