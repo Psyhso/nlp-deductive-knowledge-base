@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "entities": [
+    {"id": "e1", "label": "ИИ", "type": "course", "mentions": ["ИИ"]},
+    {"id": "e2", "label": "Логика", "type": "course", "mentions": ["Логика", "Логики"]},
+    {"id": "e3", "label": "Дискретная математика", "type": "course", "mentions": ["Дискретная математика", "Дискретной математики"]},
+    {"id": "e4", "label": "Теория множеств", "type": "course", "mentions": ["Теория множеств"]},
+    {"id": "e5", "label": "Программирование", "type": "course", "mentions": ["Программирование"]},
+    {"id": "e6", "label": "Философия", "type": "course", "mentions": ["Философия"]}
+  ],
+  "facts": [
+    {
+      "predicate": "requires", "args": ["e1", "e2"], "negated": false,
+      "evidence": ["Для изучения ИИ требуется Логика."]
+    },
+    {
+      "predicate": "requires", "args": ["e2", "e3"], "negated": false,
+      "evidence": ["Для изучения Логики требуется Дискретная математика."]
+    },
+    {
+      "predicate": "requires", "args": ["e3", "e4"], "negated": false,
+      "evidence": ["Для изучения Дискретной математики требуется Теория множеств."]
+    },
+    {
+      "predicate": "requires", "args": ["e1", "e5"], "negated": false,
+      "evidence": ["Для изучения ИИ требуется Программирование."]
+    },
+    {
+      "predicate": "requires", "args": ["e1", "e6"], "negated": true,
+      "evidence": ["Для изучения ИИ не требуется Философия."]
+    }
+  ],
+  "unparsed": []
+}

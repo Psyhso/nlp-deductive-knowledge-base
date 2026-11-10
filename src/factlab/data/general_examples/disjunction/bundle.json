@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "sorts": [{"id": "person", "label": "Люди"}, {"id": "course", "label": "Учебные дисциплины"}],
+  "predicates": [{"id": "studies", "label": "изучает", "arg_sorts": ["person", "course"]}],
+  "entities": [
+    {"id": "anna", "label": "Анна", "sort": "person", "mentions": ["Анна"]},
+    {"id": "logic", "label": "Логика", "sort": "course", "mentions": ["Логику"]},
+    {"id": "ai", "label": "ИИ", "sort": "course", "mentions": ["ИИ"]}
+  ],
+  "premises": [
+    {"id": "p1", "formula": {"op": "or", "args": [{"op": "atom", "predicate": "studies", "args": [{"entity": "anna"}, {"entity": "logic"}]}, {"op": "atom", "predicate": "studies", "args": [{"entity": "anna"}, {"entity": "ai"}]}]}, "evidence": ["Анна изучает Логику или ИИ."], "explanation": "Включительное или сохраняется одной формулой; ни один вариант отдельно не объявляется фактом."},
+    {"id": "p2", "formula": {"op": "not", "arg": {"op": "atom", "predicate": "studies", "args": [{"entity": "anna"}, {"entity": "logic"}]}}, "evidence": ["Анна не изучает Логику."], "explanation": "Явное отрицание первого варианта."}
+  ],
+  "proposals": [],
+  "queries": [
+    {"id": "q1", "formula": {"op": "atom", "predicate": "studies", "args": [{"entity": "anna"}, {"entity": "ai"}]}, "text": "Следует ли, что Анна изучает ИИ?"},
+    {"id": "q2", "formula": {"op": "atom", "predicate": "studies", "args": [{"entity": "anna"}, {"entity": "logic"}]}, "text": "Следует ли, что Анна изучает Логику?"}
+  ],
+  "unparsed": []
+}

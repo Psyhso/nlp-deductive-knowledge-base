@@ -1,0 +1,40 @@
+[build-system]
+# 69.2 fixes .pth encoding for editable installs in non-ASCII Windows paths.
+requires = ["setuptools>=69.2", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "factlab"
+version = "0.1.0"
+description = "Извлечение знаний из текста и локальный логический вывод на Z3 и Datalog"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.162.2",
+  "uvicorn==0.54.0",
+  "openai==2.54.0",
+  "httpx==0.28.1",
+  "python-dotenv==1.2.4",
+  "z3-solver==5.3.3.0",
+]
+
+[project.scripts]
+factlab = "factlab.__main__:main"
+factlab-infer = "factlab.datalog.run_inference:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["factlab*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+factlab = [
+  "web/static/*.html",
+  "web/static/*.css",
+  "web/static/*.js",
+  "prompts/*.txt",
+  "data/profiles/*/*.json",
+  "data/profiles/*/*.txt",
+  "data/general_examples/*/*.json",
+  "data/general_examples/*/*.txt",
+]

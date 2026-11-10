@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "sorts": [{"id": "person", "label": "Философы"}],
+  "predicates": [
+    {"id": "marxist", "label": "марксист", "arg_sorts": ["person"]},
+    {"id": "dialectician", "label": "диалектик", "arg_sorts": ["person"]},
+    {"id": "materialist", "label": "материалист", "arg_sorts": ["person"]}
+  ],
+  "entities": [
+    {"id": "hegel", "label": "Гегель", "sort": "person", "mentions": ["Гегель"]},
+    {"id": "feuerbach", "label": "Фейербах", "sort": "person", "mentions": ["Фейербах"]}
+  ],
+  "premises": [
+    {
+      "id": "p1",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "marxist", "args": [{"var": "x"}]}, "right": {"op": "atom", "predicate": "dialectician", "args": [{"var": "x"}]}}},
+      "evidence": ["Любой марксист - диалектик"],
+      "explanation": "Каждый марксист является диалектиком; обратное направление не утверждается."
+    },
+    {
+      "id": "p2",
+      "formula": {"op": "exists", "vars": [{"id": "x", "sort": "person"}], "body": {"op": "and", "args": [{"op": "atom", "predicate": "dialectician", "args": [{"var": "x"}]}, {"op": "not", "arg": {"op": "atom", "predicate": "marxist", "args": [{"var": "x"}]}}]}},
+      "evidence": ["не всякий диалектик - марксист"],
+      "explanation": "Есть хотя бы один диалектик, который не является марксистом; его имя не создаётся."
+    },
+    {
+      "id": "p3",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "marxist", "args": [{"var": "x"}]}, "right": {"op": "atom", "predicate": "materialist", "args": [{"var": "x"}]}}},
+      "evidence": ["Любой марксист - материалист"],
+      "explanation": "Каждый марксист является материалистом."
+    },
+    {
+      "id": "p4",
+      "formula": {"op": "exists", "vars": [{"id": "x", "sort": "person"}], "body": {"op": "and", "args": [{"op": "atom", "predicate": "materialist", "args": [{"var": "x"}]}, {"op": "not", "arg": {"op": "atom", "predicate": "marxist", "args": [{"var": "x"}]}}]}},
+      "evidence": ["не всякий материалист - марксист"],
+      "explanation": "Есть материалист, не являющийся марксистом; отдельный именованный свидетель не вводится."
+    },
+    {
+      "id": "p5",
+      "formula": {"op": "atom", "predicate": "dialectician", "args": [{"entity": "hegel"}]},
+      "evidence": ["Гегель был диалектик, но не материалист."],
+      "explanation": "В классификации, данной легендой, Гегель является диалектиком."
+    },
+    {
+      "id": "p6",
+      "formula": {"op": "not", "arg": {"op": "atom", "predicate": "materialist", "args": [{"entity": "hegel"}]}},
+      "evidence": ["Гегель был диалектик, но не материалист."],
+      "explanation": "Легенда явно отрицает материализм Гегеля."
+    },
+    {
+      "id": "p7",
+      "formula": {"op": "atom", "predicate": "materialist", "args": [{"entity": "feuerbach"}]},
+      "evidence": ["Фейербах был материалист, но не диалектик."],
+      "explanation": "В классификации, данной легендой, Фейербах является материалистом."
+    },
+    {
+      "id": "p8",
+      "formula": {"op": "not", "arg": {"op": "atom", "predicate": "dialectician", "args": [{"entity": "feuerbach"}]}},
+      "evidence": ["Фейербах был материалист, но не диалектик."],
+      "explanation": "Легенда явно отрицает, что Фейербах является диалектиком."
+    }
+  ],
+  "proposals": [],
+  "queries": [
+    {"id": "q1", "formula": {"op": "not", "arg": {"op": "atom", "predicate": "marxist", "args": [{"entity": "hegel"}]}}, "text": "Следует ли, что Гегель не марксист?"},
+    {"id": "q2", "formula": {"op": "atom", "predicate": "marxist", "args": [{"entity": "hegel"}]}, "text": "Следует ли, что Гегель марксист?"},
+    {"id": "q3", "formula": {"op": "not", "arg": {"op": "atom", "predicate": "marxist", "args": [{"entity": "feuerbach"}]}}, "text": "Следует ли, что Фейербах не марксист?"},
+    {"id": "q4", "formula": {"op": "exists", "vars": [{"id": "x", "sort": "person"}], "body": {"op": "and", "args": [{"op": "atom", "predicate": "dialectician", "args": [{"var": "x"}]}, {"op": "not", "arg": {"op": "atom", "predicate": "marxist", "args": [{"var": "x"}]}}]}}, "text": "Существует ли диалектик, не являющийся марксистом?"}
+  ],
+  "unparsed": [
+    {"text": "Ниже приведена легенда. Запишите с использованием 4 – 6 различных букв клаузу, отвечающую содержанию легенды, для чего сформулируйте необходимые посылки и два следствия: одно истинное, другое ложное.", "reason": "Задание, не факт: инструкция читателю о записи формул и проверке следствий не является посылкой о философах."},
+    {"text": "Итак, если бы Гегель и Фейербах могли объединиться в один кружок, то Маркс уже не понадобился бы.", "reason": "Риторическое контрфактическое предположение с модальностью и неопределённым смыслом нужности. Оно не задаёт обычного отношения или нового правила о марксистах."}
+  ]
+}

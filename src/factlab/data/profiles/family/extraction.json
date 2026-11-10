@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "entities": [
+    {
+      "id": "anna",
+      "label": "Анна",
+      "type": "person",
+      "mentions": [
+        "Анна",
+        "Анны"
+      ]
+    },
+    {
+      "id": "boris",
+      "label": "Борис",
+      "type": "person",
+      "mentions": [
+        "Бориса"
+      ]
+    },
+    {
+      "id": "vera",
+      "label": "Вера",
+      "type": "person",
+      "mentions": [
+        "Вера"
+      ]
+    },
+    {
+      "id": "gleb",
+      "label": "Глеб",
+      "type": "person",
+      "mentions": [
+        "Глеб",
+        "Глеба"
+      ]
+    },
+    {
+      "id": "darya",
+      "label": "Дарья",
+      "type": "person",
+      "mentions": [
+        "Дарьей"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "predicate": "parent",
+      "args": [
+        "anna",
+        "boris"
+      ],
+      "negated": false,
+      "evidence": [
+        "Анна — родитель Бориса."
+      ]
+    },
+    {
+      "predicate": "child",
+      "args": [
+        "vera",
+        "boris"
+      ],
+      "negated": false,
+      "evidence": [
+        "Вера — ребёнок Бориса."
+      ]
+    },
+    {
+      "predicate": "parent",
+      "args": [
+        "vera",
+        "gleb"
+      ],
+      "negated": false,
+      "evidence": [
+        "Вера — родитель Глеба."
+      ]
+    },
+    {
+      "predicate": "spouse",
+      "args": [
+        "anna",
+        "darya"
+      ],
+      "negated": false,
+      "evidence": [
+        "Анна состоит в браке с Дарьей."
+      ]
+    },
+    {
+      "predicate": "parent",
+      "args": [
+        "gleb",
+        "anna"
+      ],
+      "negated": true,
+      "evidence": [
+        "Глеб не является родителем Анны."
+      ]
+    }
+  ],
+  "unparsed": []
+}

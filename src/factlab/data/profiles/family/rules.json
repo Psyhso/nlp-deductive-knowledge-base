@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    {
+      "id": "parent_inverse",
+      "body": [
+        {
+          "predicate": "parent",
+          "args": [
+            {
+              "var": "P"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "child",
+        "args": [
+          {
+            "var": "C"
+          },
+          {
+            "var": "P"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "parent_from_child",
+      "body": [
+        {
+          "predicate": "child",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "P"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "parent",
+        "args": [
+          {
+            "var": "P"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "ancestor_seed",
+      "body": [
+        {
+          "predicate": "parent",
+          "args": [
+            {
+              "var": "P"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "ancestor",
+        "args": [
+          {
+            "var": "P"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "ancestor_step",
+      "body": [
+        {
+          "predicate": "parent",
+          "args": [
+            {
+              "var": "P"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "ancestor",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "D"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "ancestor",
+        "args": [
+          {
+            "var": "P"
+          },
+          {
+            "var": "D"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "grandparent_join",
+      "body": [
+        {
+          "predicate": "parent",
+          "args": [
+            {
+              "var": "P"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "parent",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "G"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "grandparent",
+        "args": [
+          {
+            "var": "P"
+          },
+          {
+            "var": "G"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "spouse_symmetric",
+      "body": [
+        {
+          "predicate": "spouse",
+          "args": [
+            {
+              "var": "A"
+            },
+            {
+              "var": "B"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "spouse",
+        "args": [
+          {
+            "var": "B"
+          },
+          {
+            "var": "A"
+          }
+        ],
+        "negated": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "schema_version": "1.0",
+  "entities": [
+    {
+      "id": "ai",
+      "label": "ИИ",
+      "type": "course",
+      "mentions": [
+        "ИИ"
+      ]
+    },
+    {
+      "id": "logic",
+      "label": "Логика",
+      "type": "course",
+      "mentions": [
+        "Логика",
+        "Логики",
+        "Логику"
+      ]
+    },
+    {
+      "id": "discrete",
+      "label": "Дискретная математика",
+      "type": "course",
+      "mentions": [
+        "Дискретной математики"
+      ]
+    },
+    {
+      "id": "sets",
+      "label": "Теория множеств",
+      "type": "course",
+      "mentions": [
+        "Теория множеств"
+      ]
+    },
+    {
+      "id": "philosophy",
+      "label": "Философия",
+      "type": "course",
+      "mentions": [
+        "Философия"
+      ]
+    },
+    {
+      "id": "anna",
+      "label": "Анна",
+      "type": "person",
+      "mentions": [
+        "Анна",
+        "Анне"
+      ]
+    },
+    {
+      "id": "boris",
+      "label": "Борис",
+      "type": "person",
+      "mentions": [
+        "Борис",
+        "Борисом"
+      ]
+    },
+    {
+      "id": "vera",
+      "label": "Вера",
+      "type": "person",
+      "mentions": [
+        "Верой",
+        "Вере"
+      ]
+    },
+    {
+      "id": "department",
+      "label": "Кафедра ИИ",
+      "type": "organization",
+      "mentions": [
+        "Кафедра ИИ"
+      ]
+    },
+    {
+      "id": "faculty",
+      "label": "Факультет информатики",
+      "type": "organization",
+      "mentions": [
+        "Факультет информатики"
+      ]
+    },
+    {
+      "id": "university",
+      "label": "Университет",
+      "type": "organization",
+      "mentions": [
+        "Университет"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "predicate": "requires",
+      "args": [
+        "ai",
+        "logic"
+      ],
+      "negated": false,
+      "evidence": [
+        "Для изучения ИИ требуется Логика."
+      ]
+    },
+    {
+      "predicate": "requires",
+      "args": [
+        "logic",
+        "discrete"
+      ],
+      "negated": false,
+      "evidence": [
+        "Для изучения Логики требуется Дискретная математика."
+      ]
+    },
+    {
+      "predicate": "prerequisite_for",
+      "args": [
+        "sets",
+        "discrete"
+      ],
+      "negated": false,
+      "evidence": [
+        "Теория множеств — обязательная предварительная дисциплина для изучения Дискретной математики."
+      ]
+    },
+    {
+      "predicate": "teaches_at",
+      "args": [
+        "anna",
+        "logic",
+        "department"
+      ],
+      "negated": false,
+      "evidence": [
+        "Анна преподаёт Логику в организации «Кафедра ИИ»."
+      ]
+    },
+    {
+      "predicate": "part_of",
+      "args": [
+        "department",
+        "faculty"
+      ],
+      "negated": false,
+      "evidence": [
+        "Организация «Кафедра ИИ» входит в состав организации «Факультет информатики»."
+      ]
+    },
+    {
+      "predicate": "part_of",
+      "args": [
+        "faculty",
+        "university"
+      ],
+      "negated": false,
+      "evidence": [
+        "Организация «Факультет информатики» входит в состав организации «Университет»."
+      ]
+    },
+    {
+      "predicate": "studies",
+      "args": [
+        "boris",
+        "ai"
+      ],
+      "negated": false,
+      "evidence": [
+        "Борис изучает ИИ."
+      ]
+    },
+    {
+      "predicate": "collaborates",
+      "args": [
+        "anna",
+        "boris"
+      ],
+      "negated": false,
+      "evidence": [
+        "Анна сотрудничает с Борисом."
+      ]
+    },
+    {
+      "predicate": "collaborates",
+      "args": [
+        "boris",
+        "vera"
+      ],
+      "negated": false,
+      "evidence": [
+        "Борис сотрудничает с Верой."
+      ]
+    },
+    {
+      "predicate": "barred_from_teaching",
+      "args": [
+        "vera",
+        "logic"
+      ],
+      "negated": false,
+      "evidence": [
+        "Вере запрещено преподавать Логику."
+      ]
+    },
+    {
+      "predicate": "requires",
+      "args": [
+        "ai",
+        "philosophy"
+      ],
+      "negated": true,
+      "evidence": [
+        "Для изучения ИИ не требуется Философия."
+      ]
+    },
+    {
+      "predicate": "may_teach",
+      "args": [
+        "anna",
+        "logic"
+      ],
+      "negated": false,
+      "evidence": [
+        "Анне разрешено преподавать Логику."
+      ]
+    }
+  ],
+  "unparsed": []
+}

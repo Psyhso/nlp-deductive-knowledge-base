@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "sorts": [{"id": "object", "label": "Объекты"}],
+  "predicates": [
+    {"id": "robot", "label": "робот", "arg_sorts": ["object"]},
+    {"id": "mechanism", "label": "механизм", "arg_sorts": ["object"]},
+    {"id": "device", "label": "устройство", "arg_sorts": ["object"]}
+  ],
+  "entities": [
+    {"id": "ray", "label": "Рэй", "sort": "object", "mentions": ["Рэй"]},
+    {"id": "nora", "label": "Нора", "sort": "object", "mentions": ["Нора"]}
+  ],
+  "premises": [
+    {
+      "id": "p1",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "object"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "robot", "args": [{"var": "x"}]}, "right": {"op": "atom", "predicate": "mechanism", "args": [{"var": "x"}]}}},
+      "evidence": ["Каждый робот — механизм."],
+      "explanation": "Любой робот является механизмом."
+    },
+    {
+      "id": "p2",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "object"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "mechanism", "args": [{"var": "x"}]}, "right": {"op": "atom", "predicate": "device", "args": [{"var": "x"}]}}},
+      "evidence": ["Каждый механизм — устройство."],
+      "explanation": "Любой механизм является устройством."
+    },
+    {
+      "id": "p3",
+      "formula": {"op": "atom", "predicate": "robot", "args": [{"entity": "ray"}]},
+      "evidence": ["Рэй — робот."],
+      "explanation": "Рэй является роботом."
+    },
+    {
+      "id": "p4",
+      "formula": {"op": "atom", "predicate": "device", "args": [{"entity": "nora"}]},
+      "evidence": ["Нора — устройство."],
+      "explanation": "Нора является устройством."
+    },
+    {
+      "id": "p5",
+      "formula": {"op": "not", "arg": {"op": "atom", "predicate": "mechanism", "args": [{"entity": "nora"}]}},
+      "evidence": ["Нора не является механизмом."],
+      "explanation": "Нора не является механизмом."
+    }
+  ],
+  "proposals": [],
+  "queries": [],
+  "unparsed": []
+}

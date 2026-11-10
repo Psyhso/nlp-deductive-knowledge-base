@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    {
+      "id": "requires_transitive",
+      "body": [
+        {
+          "predicate": "requires",
+          "args": [{"var": "C"}, {"var": "Q"}],
+          "negated": false
+        },
+        {
+          "predicate": "requires",
+          "args": [{"var": "Q"}, {"var": "P"}],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "requires",
+        "args": [{"var": "C"}, {"var": "P"}],
+        "negated": false
+      }
+    }
+  ]
+}

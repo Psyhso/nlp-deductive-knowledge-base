@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Текст и логика · Лаборатория фактов</title>
+  <meta name="description" content="Извлечение фактов из текста и автоматический поиск новых логических следствий.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/general.css">
+  <script src="/static/general.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="/" aria-label="Лаборатория фактов, главная"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Лаборатория <strong>фактов</strong></span></a>
+    <div class="header-right"><a class="mode-link" href="/profiles">Профили Datalog <span aria-hidden="true">↗</span></a><span id="g-connection" class="status-pill"><span class="status-dot"></span><span>Подключаемся…</span></span></div>
+  </div></header>
+  <main class="workspace general-workspace">
+    <section class="page-intro"><div><p class="eyebrow">Классическое логическое следование</p><h1>Текст и логика</h1><p class="intro-copy">Опишите, что известно. LLM извлечёт объекты, факты и общие посылки, а решатель сам найдёт новые факты. Задавать вопросы не нужно.</p></div><span class="general-mode-mark" aria-hidden="true">∀ · ∃ · ∨ · →</span></section>
+    <ol class="pipeline" aria-label="Этапы работы"><li class="pipeline-step is-active"><span class="step-number">01</span><div><strong>Исходный текст</strong><span>Факты и общие утверждения</span></div></li><li id="g-step-formal" class="pipeline-step"><span class="step-number">02</span><div><strong>Проверка посылок</strong><span>Словарь и выбранные определения</span></div></li><li id="g-step-solve" class="pipeline-step"><span class="step-number">03</span><div><strong>Новые факты</strong><span>Автоматический поиск следствий</span></div></li></ol>
+    <div id="g-error" class="notice notice-error" role="alert" hidden><div><strong id="g-error-title">Не удалось выполнить запрос</strong><p id="g-error-message"></p><details id="g-error-details" hidden><summary>Ответ модели</summary><pre id="g-error-raw"></pre></details></div><button id="g-close-error" class="icon-button" type="button" aria-label="Скрыть ошибку">×</button></div>
+    <div class="general-grid">
+      <section class="panel input-panel" aria-labelledby="g-input-title">
+        <div class="panel-heading"><div><p class="section-kicker">Шаг 01</p><h2 id="g-input-title">Исходный текст</h2></div><span class="small-badge">Вход</span></div>
+        <label for="g-source" class="field-label">Что известно</label>
+        <textarea id="g-source" class="source-editor" spellcheck="true" placeholder="Напишите факты и общие утверждения. Например: Любой робот — механизм. Рэй — робот."></textarea>
+        <div class="editor-meta"><span>Новые факты система найдёт сама</span><span id="g-char-count">0 символов</span></div>
+        <button id="g-extract" class="button button-primary general-full-button" type="button" disabled>Формализовать через LLM <span aria-hidden="true">→</span></button>
+        <p class="field-help">Один платный вызов модели. Логический вывод запускается отдельно после проверки посылок.</p>
+        <p id="g-config-notice" class="general-config-notice" hidden>Ключ API ещё не настроен. Готовые примеры и локальная проверка доступны без LLM.</p>
+        <div class="general-demo"><label for="g-example" class="field-label">Готовый пример</label><select id="g-example" class="text-input" disabled><option>Загружаем примеры…</option></select><button id="g-demo" class="button button-secondary general-full-button" type="button" disabled>Запустить пример без LLM</button><p class="field-help">Заменит текст готовым примером и покажет его формализацию. Предложения определений остаются выключенными.</p></div>
+        <details class="advanced-settings"><summary>Настройки модели <span aria-hidden="true">⌄</span></summary><div class="advanced-body"><label for="g-model" class="field-label">Модель</label><input id="g-model" class="text-input" type="text" autocomplete="off" spellcheck="false"><p class="field-help">API-ключ хранится только на сервере.</p><div class="field-row"><label for="g-prompt" class="field-label">Шаблон промпта</label><button id="g-reset-prompt" class="text-button" type="button">Сбросить</button></div><textarea id="g-prompt" class="code-editor prompt-editor" spellcheck="false"></textarea><p class="field-help">Сохраняйте плейсхолдер исходного текста из стандартного шаблона.</p></div></details>
+      </section>
+      <div class="general-right">
+        <section class="panel general-formal-panel" aria-labelledby="g-formal-title">
+          <div class="panel-heading"><div><p class="section-kicker">Шаг 02</p><h2 id="g-formal-title">Проверяем формализацию</h2></div><button id="g-download" class="icon-button" type="button" aria-label="Скачать полный результат" title="Скачать полный результат" disabled>↓</button></div>
+          <div id="g-empty" class="empty-state"><div class="general-empty-symbol" aria-hidden="true">∀x P(x) → Q(x)</div><h3>Начнём с посылок</h3><p>Формализуйте свой текст или запустите готовый пример.<br>Готовую формализацию можно вставить в редактор JSON ниже.</p></div>
+          <div id="g-formal-content" hidden>
+            <p class="general-trust-note">Результат зависит от формализации. Проверьте посылки и выбранные определения.</p>
+            <details class="general-vocabulary" open><summary>Словарь объектов и отношений <span id="g-vocab-count" class="small-badge"></span></summary><div id="g-vocabulary" class="general-vocab-body"></div></details>
+            <section class="general-formal-section"><div class="list-heading"><h3>Посылки из текста</h3><span id="g-premise-count" class="small-badge">0</span></div><p class="list-description">Именно эти утверждения принимаются за исходные данные.</p><div id="g-premises" class="general-formula-list"></div></section>
+            <section class="general-formal-section"><div class="list-heading"><h3>Предложения модели</h3><span id="g-proposal-count" class="small-badge">0</span></div><p class="list-description">Определения и дополнительные допущения не следуют из текста автоматически. Включите только те, с которыми согласны.</p><button id="g-accept-definitions" class="text-button general-accept-all" type="button">Выбрать все определения</button><div id="g-proposals" class="general-formula-list"></div></section>
+            <details id="g-query-preview-section" class="general-optional-queries" hidden><summary>Дополнительные утверждения для проверки <span id="g-query-count" class="small-badge">0</span></summary><div id="g-query-preview" class="general-formula-list"></div></details>
+            <details id="g-preview-unparsed-section" class="general-unparsed" hidden><summary>Не формализовано <span id="g-preview-unparsed-count" class="small-badge"></span></summary><div id="g-preview-unparsed"></div></details>
+            <div id="g-formal-stale" class="notice notice-warning" role="status" hidden><strong>Исходные данные изменены</strong><p>Показанные формулы относятся к предыдущей версии. После правок JSON запустите локальную проверку. После изменения текста проверьте формализацию или получите её через LLM заново.</p></div>
+          </div>
+          <div class="general-editor-area">
+            <details class="general-json"><summary>Вставить или исправить формализацию в JSON</summary><div><p class="field-help">Можно вставить готовый JSON или исправить словарь и формулы. Затем запустите поиск новых фактов.</p><textarea id="g-json" class="code-editor json-editor" spellcheck="false" aria-label="JSON формализации"></textarea></div></details>
+            <div class="general-solve-actions"><button id="g-solve" class="button button-primary" type="button" disabled>Найти новые факты <span aria-hidden="true">→</span></button><span>Локально · без вызова LLM</span></div>
+          </div>
+          <div id="g-progress" class="progress-status" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span><span id="g-progress-label">Обрабатываем…</span></div>
+          <footer id="g-usage" class="usage-footer" hidden></footer>
+        </section>
+        <section id="g-result-panel" class="panel general-result-panel" aria-labelledby="g-result-title" hidden>
+          <div class="panel-heading"><div><p class="section-kicker">Шаг 03</p><h2 id="g-result-title">Найденные следствия</h2></div><span id="g-result-mode" class="small-badge"></span></div>
+          <div id="g-stale" class="notice notice-warning" role="status" hidden><strong>Формализация изменена</strong><p>Ниже показан предыдущий результат. Нажмите «Найти новые факты», чтобы учесть изменения.</p></div>
+          <div id="g-consistency" class="general-consistency"></div>
+          <p class="general-unsolved-note">Следствие проверяется относительно показанных посылок и выбранных определений.</p>
+          <div id="g-statistics" class="general-statistics"></div>
+          <section class="general-output-section"><div class="list-heading"><h3>Новые факты</h3><span id="g-fact-count" class="small-badge badge-teal">0</span></div><p id="g-facts-description" class="list-description">Система сама ищет положительные и отрицательные следствия об именованных объектах.</p><div id="g-facts" class="general-fact-list"></div></section>
+          <details id="g-extracted-section" class="general-secondary-facts" hidden><summary>Исходные факты из текста <span id="g-extracted-count" class="small-badge">0</span></summary><div id="g-extracted-facts" class="general-fact-list"></div></details>
+          <details id="g-queries-section" class="general-optional-queries" hidden><summary>Дополнительная проверка утверждений <span id="g-result-query-count" class="small-badge">0</span></summary><div><p class="list-description">Это необязательные утверждения из входного текста или JSON. Поиск новых фактов выполняется и без них. «Не определяется» означает, что из посылок нельзя доказать ни утверждение, ни его отрицание.</p><div id="g-queries" class="general-query-list"></div></div></details>
+          <details id="g-unparsed-section" class="general-unparsed" hidden><summary>Не формализовано <span id="g-unparsed-count" class="small-badge"></span></summary><div id="g-unparsed"></div></details>
+          <details class="general-semantics"><summary>Как находятся новые факты</summary><div><p>Система составляет допустимые комбинации предикатов и названных объектов и проверяет, какие утверждения или отрицания следуют из посылок. Отсутствие факта не означает его отрицание.</p><p>У каждого нового факта можно раскрыть основания: достаточный набор исходных посылок и принятых определений. Это не пошаговое дерево доказательства.</p><p>Область объектов открыта: кроме названных в тексте, могут существовать и другие. Утверждение «кто-то существует» сохраняется с квантором существования, без придумывания имени.</p><p>Разные имена сами по себе не означают разных объектов. Если различие существенно, его нужно записать отдельной посылкой.</p><p>Перечисление фактов ограничено числом кандидатов и временем. Для общей логики первого порядка нет гарантии завершить любую проверку. Неполный поиск отмечается отдельно.</p><p id="g-report-explanation"></p></div></details>
+        </section>
+      </div>
+    </div>
+    <footer class="page-footer"><span>Дедуктивные базы знаний и обработка естественного языка</span><span>LLM формализует · Z3 проверяет следствия</span></footer>
+  </main>
+  <noscript><p class="noscript-notice">Для работы лаборатории включите JavaScript в браузере.</p></noscript>
+</body>
+</html>

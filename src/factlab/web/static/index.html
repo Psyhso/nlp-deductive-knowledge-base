@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Лаборатория фактов · МЛиТА</title>
+  <meta name="description" content="Извлечение фактов из текста и объяснимый логический вывод.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Лаборатория фактов, главная">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Лаборатория <strong>фактов</strong></span>
+      </a>
+      <div class="header-right"><a class="course-label" href="/general">Текст и логика ↗</a><span id="connection-status" class="status-pill"><span class="status-dot"></span><span>Подключаемся…</span></span></div>
+    </div>
+  </header>
+  <main class="workspace">
+    <section class="page-intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">Текст → знания</p><h1 id="page-title">От слов к новым фактам</h1><p class="intro-copy">LLM находит явные утверждения. Логические правила связывают их и объясняют вывод.</p></div>
+      <button id="demo-button" class="button button-demo" type="button"><span aria-hidden="true">▷</span> Запустить пример без LLM</button>
+    </section>
+    <ol class="pipeline" aria-label="Этапы обработки">
+      <li id="step-text" class="pipeline-step is-active"><span class="step-number">01</span><div><strong>Исходный текст</strong><span>Люди, объекты и отношения</span></div></li>
+      <li id="step-facts" class="pipeline-step"><span class="step-number">02</span><div><strong>Извлечение фактов</strong><span>LLM → проверенный JSON</span></div></li>
+      <li id="step-inference" class="pipeline-step"><span class="step-number">03</span><div><strong>Логический вывод</strong><span>Новые связи и их основания</span></div></li>
+    </ol>
+
+    <div id="error-banner" class="notice notice-error" role="alert" hidden><div><strong id="error-title">Не удалось выполнить запрос</strong><p id="error-message"></p><details id="error-raw-details" hidden><summary>Ответ модели</summary><pre id="error-raw"></pre></details></div><button id="close-error" class="icon-button" type="button" aria-label="Скрыть ошибку">×</button></div>
+    <div id="configuration-notice" class="notice notice-info" hidden><span class="notice-symbol" aria-hidden="true">i</span><p>LLM ещё не настроена на сервере. Пока можно запустить готовый пример или вставить JSON во вкладке «JSON» и выполнить вывод.</p></div>
+
+    <div class="main-grid">
+      <section class="panel input-panel" aria-labelledby="input-title">
+        <div class="panel-heading"><div><p class="section-kicker">Шаг 01</p><h2 id="input-title">Что знаем из текста</h2></div><span class="small-badge">Вход</span></div>
+        <div class="profile-selector">
+          <label for="knowledge-profile" class="field-label">Профиль знаний</label>
+          <select id="knowledge-profile" class="text-input" aria-describedby="profile-description" disabled><option value="university">Университет — расширенный</option></select>
+          <p id="profile-description" class="profile-description">Загружаем словарь и правила…</p>
+          <details id="profile-capabilities" class="profile-capabilities">
+            <summary><span>Что умеет этот профиль</span><span id="profile-rule-count" class="small-badge"></span><span class="profile-chevron" aria-hidden="true">⌄</span></summary>
+            <div id="profile-rules" class="profile-rules"></div>
+          </details>
+        </div>
+        <label for="source-text" class="field-label">Текст для извлечения</label>
+        <textarea id="source-text" class="source-editor" placeholder="Например: для изучения ИИ требуется Логика. Для изучения Логики требуется Дискретная математика." spellcheck="true"></textarea>
+        <div class="editor-meta"><span>Только явно утверждаемые факты</span><span id="character-count">0 символов</span></div>
+        <div class="input-actions"><button id="analyze-button" class="button button-primary" type="button"><span class="button-label">Извлечь и вывести</span><span aria-hidden="true">→</span></button><button id="extract-button" class="button button-secondary" type="button">Только извлечение</button></div>
+        <p class="field-help">Один вызов LLM. Вывод новых фактов выполняется локально, без расхода токенов.</p>
+        <div id="progress-status" class="progress-status" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span><span id="progress-label">Обрабатываем текст…</span></div>
+        <details class="advanced-settings">
+          <summary>Настройки извлечения <span aria-hidden="true">⌄</span></summary>
+          <div class="advanced-body">
+            <label for="model-name" class="field-label">Модель</label><input id="model-name" class="text-input" type="text" placeholder="Модель из настроек сервера" autocomplete="off" spellcheck="false">
+            <p class="field-help">Имя модели у OpenAI-совместимого провайдера. API-ключ хранится только на сервере.</p>
+            <div class="field-row"><label for="prompt-template" class="field-label">Шаблон промпта</label><button id="reset-prompt" class="text-button" type="button">Сбросить</button></div>
+            <textarea id="prompt-template" class="code-editor prompt-editor" spellcheck="false" aria-describedby="prompt-help"></textarea><p id="prompt-help" class="field-help">Сохраняйте плейсхолдеры схемы и исходного текста из стандартного шаблона.</p>
+            <details class="reference-details"><summary>Словарь предикатов</summary><pre id="schema-preview" class="code-preview"></pre></details>
+            <details class="reference-details"><summary>Правила логического вывода</summary><pre id="rules-preview" class="code-preview"></pre></details>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel results-panel" aria-labelledby="results-title" aria-busy="false">
+        <div class="panel-heading"><div><p class="section-kicker">Шаги 02–03</p><h2 id="results-title">Результат обработки</h2></div><div class="result-heading-actions"><span id="result-mode" class="small-badge" hidden></span><button id="download-report" class="icon-button download-button" type="button" disabled title="Скачать полный результат" aria-label="Скачать полный результат">↓</button></div></div>
+        <div id="result-context" class="result-context" hidden></div>
+        <div id="statistics" class="statistics" hidden><div><strong id="stat-initial">0</strong><span>из текста</span></div><div class="stat-highlight"><strong id="stat-new">0</strong><span>новых фактов</span></div><div><strong id="stat-entities">0</strong><span>сущностей</span></div><div><strong id="stat-rounds">—</strong><span>раундов вывода</span></div></div>
+        <div class="result-tabs" role="tablist" aria-label="Представление результата"><button id="tab-facts" class="tab is-selected" role="tab" aria-selected="true" aria-controls="view-facts" tabindex="0" type="button" data-view="facts">Факты</button><button id="tab-entities" class="tab" role="tab" aria-selected="false" aria-controls="view-entities" tabindex="-1" type="button" data-view="entities">Сущности <span id="entities-count" class="tab-count">0</span></button><button id="tab-unparsed" class="tab" role="tab" aria-selected="false" aria-controls="view-unparsed" tabindex="-1" type="button" data-view="unparsed">Не извлечено <span id="unparsed-count" class="tab-count">0</span></button><button id="tab-json" class="tab" role="tab" aria-selected="false" aria-controls="view-json" tabindex="-1" type="button" data-view="json">JSON</button></div>
+        <div id="view-facts" class="tab-panel" role="tabpanel" aria-labelledby="tab-facts">
+          <div id="empty-state" class="empty-state"><div class="empty-diagram" aria-hidden="true"><span>Текст</span><i>→</i><span>{ факты }</span><i>→</i><span>Новые связи</span></div><h3>Здесь появится результат</h3><p>Добавьте текст и запустите обработку.<br>Или попробуйте пример — без ключа и платных запросов.</p><span class="empty-note"><span class="tiny-dot"></span> Каждое следствие можно проследить до источника</span></div>
+          <div id="fact-results" hidden><div id="review-notice" class="notice notice-warning" hidden></div><section class="facts-section"><div class="list-heading"><h3>Извлечено из текста</h3><span id="initial-count" class="small-badge">0</span></div><p class="list-description">Утверждения из исходного текста с подтверждающими цитатами.</p><div id="initial-facts" class="fact-list"></div></section><section class="facts-section derived-section"><div class="list-heading"><h3><span class="tiny-dot"></span> Новые факты</h3><span id="derived-count" class="small-badge badge-teal">0</span></div><p id="derived-description" class="list-description">Следствия из фактов и фиксированных правил. Откройте факт, чтобы увидеть объяснение.</p><div id="derived-facts" class="fact-list"></div></section><section id="graph-section" class="graph-section" hidden><h3>Проверки графа</h3><div id="graph-checks"></div></section></div>
+        </div>
+        <div id="view-entities" class="tab-panel" role="tabpanel" aria-labelledby="tab-entities" hidden><p class="tab-intro">Объекты, явно названные в тексте. Аргументы фактов ссылаются на их ID.</p><div id="entity-list" class="entity-list"><p class="inline-empty">Сущности появятся после извлечения.</p></div></div>
+        <div id="view-unparsed" class="tab-panel" role="tabpanel" aria-labelledby="tab-unparsed" hidden><p class="tab-intro">Фрагменты, которые нельзя надёжно записать фактом в текущем словаре.</p><div id="unparsed-list"><p class="inline-empty">Пока нет обработанного текста.</p></div></div>
+        <div id="view-json" class="tab-panel" role="tabpanel" aria-labelledby="tab-json" hidden><div class="field-row"><label for="json-editor" class="field-label">JSON извлечения</label><button id="download-json" class="text-button" type="button" disabled>Скачать JSON ↓</button></div><p class="tab-intro json-intro">Можно вставить ответ из чата или исправить факты. Повторный вывод не обращается к LLM.</p><textarea id="json-editor" class="code-editor json-editor" spellcheck="false" placeholder='{"schema_version":"1.0","entities":[],"facts":[],"unparsed":[]}'></textarea><div class="json-actions"><button id="infer-button" class="button button-primary" type="button">Повторить вывод <span aria-hidden="true">→</span></button><span>Без вызова LLM</span></div></div>
+        <footer id="usage-footer" class="usage-footer" hidden></footer>
+      </section>
+    </div>
+    <footer class="page-footer"><span>Дедуктивные базы знаний и обработка естественного языка</span><span>LLM извлекает · Python проверяет и выводит</span></footer>
+  </main>
+  <noscript><p class="noscript-notice">Для работы лаборатории включите JavaScript в браузере.</p></noscript>
+</body>
+</html>

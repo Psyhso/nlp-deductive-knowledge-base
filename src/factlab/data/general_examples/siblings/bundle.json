@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "sorts": [{"id": "person", "label": "Люди"}],
+  "predicates": [
+    {"id": "brother", "label": "брат", "arg_sorts": ["person", "person"]},
+    {"id": "sister", "label": "сестра", "arg_sorts": ["person", "person"]},
+    {"id": "sibling", "label": "брат или сестра", "arg_sorts": ["person", "person"]},
+    {"id": "male", "label": "мужчина", "arg_sorts": ["person"]},
+    {"id": "female", "label": "женщина", "arg_sorts": ["person"]}
+  ],
+  "entities": [
+    {"id": "gleb", "label": "Глеб", "sort": "person", "mentions": ["Глеб"]},
+    {"id": "anya", "label": "Аня", "sort": "person", "mentions": ["Ани", "Аня"]},
+    {"id": "petya", "label": "Петя", "sort": "person", "mentions": ["Пети"]}
+  ],
+  "premises": [
+    {"id": "p1", "formula": {"op": "atom", "predicate": "brother", "args": [{"entity": "gleb"}, {"entity": "anya"}]}, "evidence": ["Глеб — брат Ани."], "explanation": "Глеб назван братом Ани; направление отношения сохраняется."},
+    {"id": "p2", "formula": {"op": "atom", "predicate": "sister", "args": [{"entity": "anya"}, {"entity": "petya"}]}, "evidence": ["Аня — сестра Пети."], "explanation": "Аня названа сестрой Пети. Про пол Пети текст не сообщает."}
+  ],
+  "proposals": [
+    {
+      "id": "d1", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: брат относится к сиблингам второго человека.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "brother", "args": [{"var": "x"}, {"var": "y"}]}, "right": {"op": "atom", "predicate": "sibling", "args": [{"var": "x"}, {"var": "y"}]}}}
+    },
+    {
+      "id": "d2", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: пол первого аргумента следует из слова «брат», а не из его имени.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "brother", "args": [{"var": "x"}, {"var": "y"}]}, "right": {"op": "atom", "predicate": "male", "args": [{"var": "x"}]}}}
+    },
+    {
+      "id": "d3", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: сестра относится к сиблингам второго человека.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "sister", "args": [{"var": "x"}, {"var": "y"}]}, "right": {"op": "atom", "predicate": "sibling", "args": [{"var": "x"}, {"var": "y"}]}}}
+    },
+    {
+      "id": "d4", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: женский пол первого аргумента связан со словом «сестра».",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "sister", "args": [{"var": "x"}, {"var": "y"}]}, "right": {"op": "atom", "predicate": "female", "args": [{"var": "x"}]}}}
+    },
+    {
+      "id": "d5", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: sibling симметрично. Транзитивность не предлагается.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "atom", "predicate": "sibling", "args": [{"var": "x"}, {"var": "y"}]}, "right": {"op": "atom", "predicate": "sibling", "args": [{"var": "y"}, {"var": "x"}]}}}
+    },
+    {
+      "id": "d6", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: сиблинг мужского пола является братом.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "and", "args": [{"op": "atom", "predicate": "sibling", "args": [{"var": "x"}, {"var": "y"}]}, {"op": "atom", "predicate": "male", "args": [{"var": "x"}]}]}, "right": {"op": "atom", "predicate": "brother", "args": [{"var": "x"}, {"var": "y"}]}}}
+    },
+    {
+      "id": "d7", "origin": "definition", "explanation": "Предлагаемое определение, пока не посылка: сиблинг женского пола является сестрой.",
+      "formula": {"op": "forall", "vars": [{"id": "x", "sort": "person"}, {"id": "y", "sort": "person"}], "body": {"op": "implies", "left": {"op": "and", "args": [{"op": "atom", "predicate": "sibling", "args": [{"var": "x"}, {"var": "y"}]}, {"op": "atom", "predicate": "female", "args": [{"var": "x"}]}]}, "right": {"op": "atom", "predicate": "sister", "args": [{"var": "x"}, {"var": "y"}]}}}
+    }
+  ],
+  "queries": [
+    {"id": "q1", "formula": {"op": "atom", "predicate": "sister", "args": [{"entity": "anya"}, {"entity": "gleb"}]}, "text": "Следует ли, что Аня — сестра Глеба?"},
+    {"id": "q2", "formula": {"op": "atom", "predicate": "brother", "args": [{"entity": "gleb"}, {"entity": "petya"}]}, "text": "Следует ли, что Глеб — брат Пети?"},
+    {"id": "q3", "formula": {"op": "atom", "predicate": "brother", "args": [{"entity": "petya"}, {"entity": "anya"}]}, "text": "Следует ли, что Петя — брат Ани?"}
+  ],
+  "unparsed": []
+}

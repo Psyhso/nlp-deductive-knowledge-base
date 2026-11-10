@@ -1,0 +1,35 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Local output and tool caches
+inference-result.json
+outputs/
+*.log
+.build/
+.codex-cache/
+.presentation-validation/
+.repo-prep/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,349 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    {
+      "id": "requires_transitive",
+      "body": [
+        {
+          "predicate": "requires",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "Q"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "requires",
+          "args": [
+            {
+              "var": "Q"
+            },
+            {
+              "var": "P"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "requires",
+        "args": [
+          {
+            "var": "C"
+          },
+          {
+            "var": "P"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "requires_inverse",
+      "body": [
+        {
+          "predicate": "requires",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "P"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "prerequisite_for",
+        "args": [
+          {
+            "var": "P"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "requires_from_prerequisite",
+      "body": [
+        {
+          "predicate": "prerequisite_for",
+          "args": [
+            {
+              "var": "P"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "requires",
+        "args": [
+          {
+            "var": "C"
+          },
+          {
+            "var": "P"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "teaches_projection",
+      "body": [
+        {
+          "predicate": "teaches_at",
+          "args": [
+            {
+              "var": "T"
+            },
+            {
+              "var": "C"
+            },
+            {
+              "var": "O"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "teaches",
+        "args": [
+          {
+            "var": "T"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "teacher_from_teaching",
+      "body": [
+        {
+          "predicate": "teaches",
+          "args": [
+            {
+              "var": "T"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "teacher",
+        "args": [
+          {
+            "var": "T"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "teaching_organization",
+      "body": [
+        {
+          "predicate": "teaches_at",
+          "args": [
+            {
+              "var": "T"
+            },
+            {
+              "var": "C"
+            },
+            {
+              "var": "O"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "part_of",
+          "args": [
+            {
+              "var": "O"
+            },
+            {
+              "var": "P"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "teaches_at",
+        "args": [
+          {
+            "var": "T"
+          },
+          {
+            "var": "C"
+          },
+          {
+            "var": "P"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "part_of_transitive",
+      "body": [
+        {
+          "predicate": "part_of",
+          "args": [
+            {
+              "var": "A"
+            },
+            {
+              "var": "B"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "part_of",
+          "args": [
+            {
+              "var": "B"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "part_of",
+        "args": [
+          {
+            "var": "A"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "study_prerequisite",
+      "body": [
+        {
+          "predicate": "studies",
+          "args": [
+            {
+              "var": "S"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        },
+        {
+          "predicate": "requires",
+          "args": [
+            {
+              "var": "C"
+            },
+            {
+              "var": "P"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "needs_course",
+        "args": [
+          {
+            "var": "S"
+          },
+          {
+            "var": "P"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "collaborates_symmetric",
+      "body": [
+        {
+          "predicate": "collaborates",
+          "args": [
+            {
+              "var": "A"
+            },
+            {
+              "var": "B"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "collaborates",
+        "args": [
+          {
+            "var": "B"
+          },
+          {
+            "var": "A"
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "id": "teaching_prohibition",
+      "body": [
+        {
+          "predicate": "barred_from_teaching",
+          "args": [
+            {
+              "var": "T"
+            },
+            {
+              "var": "C"
+            }
+          ],
+          "negated": false
+        }
+      ],
+      "head": {
+        "predicate": "may_teach",
+        "args": [
+          {
+            "var": "T"
+          },
+          {
+            "var": "C"
+          }
+        ],
+        "negated": true
+      }
+    }
+  ]
+}
