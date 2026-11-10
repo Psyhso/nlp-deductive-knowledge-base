@@ -2,3 +2,10 @@
 
 .general-editor-area{padding:0 24px 24px}#g-formal-content{padding-bottom:0}.general-editor-area>.general-json{margin-top:0}#g-formal-content:not([hidden])+.general-editor-area{padding-top:23px}@media(max-width:1100px){.general-editor-area{padding-left:20px;padding-right:20px;padding-bottom:20px}}
 .general-secondary-facts,.general-optional-queries{border:1px solid var(--line);border-radius:8px;margin-top:22px}.general-secondary-facts>summary,.general-optional-queries>summary{font-size:11px;color:#657c70;padding:12px 14px;display:flex;align-items:center;gap:8px}.general-secondary-facts>summary:before,.general-optional-queries>summary:before{content:"+";color:#8ea99c;width:10px;flex-shrink:0}.general-secondary-facts[open]>summary:before,.general-optional-queries[open]>summary:before{content:"−"}.general-secondary-facts>div,.general-optional-queries>div{padding:0 14px 14px}.general-result-panel.is-stale #g-extracted-facts{opacity:.55}.general-partial-note{display:block}
+
+#g-premises .general-formula-card{padding:14px 16px}
+#g-premises .general-formula{font-size:16px;line-height:1.75;color:#244637}
+#g-premises .general-formula-id{font-size:11px;color:#64796d}
+#g-premises .general-formula-explanation{font-size:14px;line-height:1.7;color:#425b4c}
+#g-premises .general-evidence{font-size:14px;line-height:1.7;color:#4c6054;border-left-color:#b8cec0}
+@media(max-width:560px){#g-premises .general-formula-card{padding:12px}#g-premises .general-formula{font-size:15px}}

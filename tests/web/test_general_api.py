@@ -102,6 +102,26 @@ class GeneralAPITests(unittest.TestCase):
         self.assertEqual(len([f for f in report['facts'] if f['origin'] == 'derived']), 3)
         self.assertEqual(len(self.calls), 1)
 
+    def test_book_club_with_wrapped_evidence_discovers_three_facts_for_masha(self):
+        folder = Path(__file__).resolve().parents[1] / 'fixtures' / 'general' / 'book_club'
+        source = (folder / 'text.txt').read_text(encoding='utf-8')
+        bundle = json.loads((folder / 'bundle.json').read_text(encoding='utf-8'))
+        response = self.analyze(source, bundle)
+        self.assertEqual(response.status_code, 200, response.text)
+        report = response.json()['report']
+        self.assertEqual(report['consistency'], 'sat')
+        self.assertEqual(report['queries'], [])
+        found = {
+            (f['predicate'], tuple(f['args']), f['negated'])
+            for f in report['facts'] if f['origin'] == 'derived'
+        }
+        self.assertEqual(found, {
+            ('prepared', ('maria',), False),
+            ('in_discussion_group', ('maria',), False),
+            ('speaker_list', ('maria',), False),
+        })
+        self.assertEqual(self.calls, [])
+
     def test_legend_demo_checks_true_and_false_queries_and_quantifiers(self):
         response = self.client.post('/api/general/demo', json={'example_id': 'legend'})
         self.assertEqual(response.status_code, 200)

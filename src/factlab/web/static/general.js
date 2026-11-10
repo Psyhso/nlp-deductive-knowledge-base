@@ -76,11 +76,9 @@
   }
   function renderVocabulary(preview) {
     const target = $("g-vocabulary"); clear(target);
-    const sorts = new Map((preview.sorts || []).map((sort) => [sort.id, sort.label || sort.id]));
     const groups = [
-      ["Типы объектов", preview.sorts || [], (item) => item.label || item.id, (item) => item.id],
-      ["Названные объекты", preview.entities || [], (item) => item.label || item.id, (item) => sorts.get(item.sort) || item.sort || item.id],
-      ["Отношения", preview.predicates || [], (item) => item.label || item.id, (item) => `${item.id}(${(item.arg_sorts || []).map((id) => sorts.get(id) || id).join(", ")})`]
+      ["Названные объекты", preview.entities || [], (item) => item.label || item.id, (item) => item.id],
+      ["Отношения", preview.predicates || [], (item) => item.label || item.id, (item) => `${item.id} · ${(item.arg_sorts || []).length} арг.`]
     ];
     for (const [title, items, label, detail] of groups) {
       if (!items.length) continue;

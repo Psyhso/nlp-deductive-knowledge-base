@@ -487,6 +487,31 @@ class LogicValidationTests(unittest.TestCase):
             with self.subTest(data=data), self.assertRaisesRegex(LogicValidationError, "цитата отсутствует"):
                 validate_bundle(data, self.source)
 
+    def test_quote_formatting_is_tolerated_without_rewriting_user_data(self):
+        source = (
+            "Анна прочитала\r\n\t«Айболит»\u00a0—\u00a0и выступила.\n"
+            "Неизвестно,\tчитала ли Ольга."
+        )
+        self.data["entities"][0]["mentions"] = ["анна"]
+        self.data["premises"][0]["evidence"] = ['АННА ПРОЧИТАЛА "Аи\u0306болит" – И ВЫСТУПИЛА.']
+        self.data["unparsed"] = [{"text": "неизвестно, читала ли ольга.", "reason": "unknown"}]
+        self.assertEqual(validate_bundle(self.data, source), self.data)
+
+    def test_quote_normalization_preserves_words_negation_and_numbers(self):
+        source = "Анна не прочитала книгу за 0,5 часа."
+        invalid_quotes = [
+            "Анна прочитала книгу за 0,5 часа.",
+            "Анна не прочитала книгу за 05 часа.",
+            "Анна не прочитала книгу за 0.5 часа.",
+            "Анна книгу не прочитала за 0,5 часа.",
+            "Анна непрочитала книгу за 0,5 часа.",
+            "Анна не прочитала роман за 0,5 часа.",
+        ]
+        for quote in invalid_quotes:
+            self.data["premises"][0]["evidence"] = [quote]
+            with self.subTest(quote=quote), self.assertRaisesRegex(LogicValidationError, "цитата отсутствует"):
+                validate_bundle(self.data, source)
+
     def test_invalid_operations_nonstandard_constants_and_depth_are_rejected(self):
         self.data["premises"][0]["formula"] = {"op": "execute", "code": "exit()"}
         with self.assertRaises(LogicValidationError):

@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "sorts": [{"id": "object", "label": "Объекты"}],
+  "predicates": [
+    {"id": "guest", "label": "гость клуба", "arg_sorts": ["object"]},
+    {"id": "book_of_month", "label": "книга месяца", "arg_sorts": ["object"]},
+    {"id": "read", "label": "прочитал", "arg_sorts": ["object", "object"]},
+    {"id": "prepared", "label": "подготовленный участник встречи", "arg_sorts": ["object"]},
+    {"id": "in_discussion_group", "label": "входит в группу обсуждения", "arg_sorts": ["object"]},
+    {"id": "wants_speak", "label": "хочет выступить", "arg_sorts": ["object"]},
+    {"id": "speaker_list", "label": "включён в список выступающих", "arg_sorts": ["object"]}
+  ],
+  "entities": [
+    {"id": "maria", "label": "Маша", "sort": "object", "mentions": ["Маша"]},
+    {"id": "olej", "label": "Олег", "sort": "object", "mentions": ["Олег"]},
+    {"id": "little_prince", "label": "Маленький принц", "sort": "object", "mentions": ["Маленький принц", "Маленького принца"]}
+  ],
+  "premises": [
+    {"id":"p1","formula":{"op":"atom","predicate":"book_of_month","args":[{"entity":"little_prince"}]},"evidence":["Книгой месяца в клубе был «Маленький принц»."],"explanation":"«Маленький принц» был книгой месяца в клубе."},
+    {"id":"p2","formula":{"op":"forall","vars":[{"id":"x","sort":"object"}],"body":{"op":"implies","left":{"op":"and","args":[{"op":"atom","predicate":"guest","args":[{"var":"x"}]},{"op":"exists","vars":[{"id":"y","sort":"object"}],"body":{"op":"and","args":[{"op":"atom","predicate":"book_of_month","args":[{"var":"y"}]},{"op":"atom","predicate":"read","args":[{"var":"x"},{"var":"y"}]}]}}]},"right":{"op":"atom","predicate":"prepared","args":[{"var":"x"}]}}},"evidence":["любого гостя, который прочитал книгу месяца, считают подготовленным участником встречи."],"explanation":"Каждый гость, прочитавший книгу месяца, считается подготовленным участником встречи."},
+    {"id":"p3","formula":{"op":"forall","vars":[{"id":"x","sort":"object"}],"body":{"op":"implies","left":{"op":"atom","predicate":"prepared","args":[{"var":"x"}]},"right":{"op":"atom","predicate":"in_discussion_group","args":[{"var":"x"}]}}},"evidence":["Все подготовленные участники входят в группу обсуждения."],"explanation":"Каждый подготовленный участник входит в группу обсуждения."},
+    {"id":"p4","formula":{"op":"forall","vars":[{"id":"x","sort":"object"}],"body":{"op":"implies","left":{"op":"and","args":[{"op":"atom","predicate":"in_discussion_group","args":[{"var":"x"}]},{"op":"atom","predicate":"wants_speak","args":[{"var":"x"}]}]},"right":{"op":"atom","predicate":"speaker_list","args":[{"var":"x"}]}}},"evidence":["Тех, кто входит в группу обсуждения и хочет выступить, включают в список выступающих."],"explanation":"Тот, кто входит в группу обсуждения и хочет выступить, включается в список выступающих."},
+    {"id":"p5","formula":{"op":"atom","predicate":"guest","args":[{"entity":"maria"}]},"evidence":["Маша заглянула в книжный клуб «Переплёт» как гостья."],"explanation":"Маша пришла в клуб как гостья."},
+    {"id":"p6","formula":{"op":"atom","predicate":"read","args":[{"entity":"maria"},{"entity":"little_prince"}]},"evidence":["Маша уже прочитала «Маленького принца»"],"explanation":"Маша уже прочитала «Маленького принца»."},
+    {"id":"p7","formula":{"op":"atom","predicate":"wants_speak","args":[{"entity":"maria"}]},"evidence":["Маша уже прочитала «Маленького принца» и хотела выступить."],"explanation":"Маша хотела выступить."},
+    {"id":"p8","formula":{"op":"atom","predicate":"guest","args":[{"entity":"olej"}]},"evidence":["Вместе с ней пришёл Олег, тоже гость клуба."],"explanation":"Олег пришёл в клуб как гость."},
+    {"id":"p9","formula":{"op":"atom","predicate":"wants_speak","args":[{"entity":"olej"}]},"evidence":["Олег хотел выступить, но о прочитанных им книгах ничего не известно."],"explanation":"Олег хотел выступить."}
+  ],
+  "proposals": [],
+  "queries": [],
+  "unparsed": [{"text":"о прочитанных им книгах ничего не известно","reason":"Отсутствие информации о прочитанных Олегом книгах не является явным утверждением об их отсутствии; формула не строится."}]
+}

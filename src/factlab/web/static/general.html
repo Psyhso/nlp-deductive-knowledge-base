@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Текст и логика · Лаборатория фактов</title>
+  <title>Семинар МЛиТА</title>
   <meta name="description" content="Извлечение фактов из текста и автоматический поиск новых логических следствий.">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/static/app.css">
@@ -13,11 +13,11 @@
 </head>
 <body>
   <header class="site-header"><div class="header-inner">
-    <a class="brand" href="/" aria-label="Лаборатория фактов, главная"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Лаборатория <strong>фактов</strong></span></a>
+    <a class="brand" href="/" aria-label="Семинар МЛиТА, главная"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Семинар <strong>МЛиТА</strong></span></a>
     <div class="header-right"><a class="mode-link" href="/profiles">Профили Datalog <span aria-hidden="true">↗</span></a><span id="g-connection" class="status-pill"><span class="status-dot"></span><span>Подключаемся…</span></span></div>
   </div></header>
   <main class="workspace general-workspace">
-    <section class="page-intro"><div><p class="eyebrow">Классическое логическое следование</p><h1>Текст и логика</h1><p class="intro-copy">Опишите, что известно. LLM извлечёт объекты, факты и общие посылки, а решатель сам найдёт новые факты. Задавать вопросы не нужно.</p></div><span class="general-mode-mark" aria-hidden="true">∀ · ∃ · ∨ · →</span></section>
+    <section class="page-intro"><div><p class="eyebrow">Классическое логическое следование</p><h1>Текст и логика</h1><p class="intro-copy">Опишите, что известно. LLM извлечёт объекты, факты и общие посылки, а решатель сам найдёт новые факты.</p></div><span class="general-mode-mark" aria-hidden="true">∀ · ∃ · ∨ · →</span></section>
     <ol class="pipeline" aria-label="Этапы работы"><li class="pipeline-step is-active"><span class="step-number">01</span><div><strong>Исходный текст</strong><span>Факты и общие утверждения</span></div></li><li id="g-step-formal" class="pipeline-step"><span class="step-number">02</span><div><strong>Проверка посылок</strong><span>Словарь и выбранные определения</span></div></li><li id="g-step-solve" class="pipeline-step"><span class="step-number">03</span><div><strong>Новые факты</strong><span>Автоматический поиск следствий</span></div></li></ol>
     <div id="g-error" class="notice notice-error" role="alert" hidden><div><strong id="g-error-title">Не удалось выполнить запрос</strong><p id="g-error-message"></p><details id="g-error-details" hidden><summary>Ответ модели</summary><pre id="g-error-raw"></pre></details></div><button id="g-close-error" class="icon-button" type="button" aria-label="Скрыть ошибку">×</button></div>
     <div class="general-grid">
@@ -68,6 +68,6 @@
     </div>
     <footer class="page-footer"><span>Дедуктивные базы знаний и обработка естественного языка</span><span>LLM формализует · Z3 проверяет следствия</span></footer>
   </main>
-  <noscript><p class="noscript-notice">Для работы лаборатории включите JavaScript в браузере.</p></noscript>
+  <noscript><p class="noscript-notice">Для работы сайта включите JavaScript в браузере.</p></noscript>
 </body>
 </html>

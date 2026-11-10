@@ -13,6 +13,7 @@ import json
 import re
 from time import monotonic
 from typing import Any
+import unicodedata
 
 import z3
 
@@ -36,6 +37,21 @@ _COUNTS = {
     "sorts": 12, "predicates": 40, "entities": 60, "premises": 60,
     "proposals": 30, "queries": 20, "unparsed": 60,
 }
+_QUOTE_TYPOGRAPHY = str.maketrans({
+    **dict.fromkeys('«»„“”‟', '"'),
+    **dict.fromkeys("‘’‚‛", "'"),
+    **dict.fromkeys("‐‑‒–—", "-"),
+})
+
+
+def _normalize_quote(text: str) -> str:
+    """Сравнивать цитаты без различий регистра, пробелов и типографики.
+
+    Слова, их порядок, отрицания, числа и прочая пунктуация сохраняются:
+    это поиск подстроки, а не нечёткий поиск или проверка пересказа.
+    """
+    text = unicodedata.normalize("NFC", text).translate(_QUOTE_TYPOGRAPHY).casefold()
+    return " ".join(text.split())
 
 
 def _object(value: Any, keys: set[str], path: str) -> dict:
@@ -77,18 +93,25 @@ def _nonstandard_constant(value: str) -> None:
 
 class _Validator:
     def __init__(self, source: str | None) -> None:
-        self.source = source
+        self.normalized_source = _normalize_quote(source) if source is not None else None
         self.sorts: dict[str, dict] = {}
         self.predicates: dict[str, dict] = {}
         self.entities: dict[str, dict] = {}
         self.nodes = 0
 
+    def quote(self, value: Any, path: str) -> str:
+        quote = _string(value, path, 30_000)
+        if self.normalized_source is not None and _normalize_quote(quote) not in self.normalized_source:
+            raise LogicValidationError(
+                f"{path}: цитата отсутствует в исходном тексте "
+                "даже без учёта регистра, пробелов и типографики."
+            )
+        return quote
+
     def quotes(self, value: Any, path: str) -> list[str]:
         result = []
         for index, item in enumerate(_array(value, path, 20, 1)):
-            quote = _string(item, f"{path}[{index}]", 30_000)
-            if self.source is not None and quote not in self.source:
-                raise LogicValidationError(f"{path}[{index}]: цитата отсутствует в исходном тексте.")
+            quote = self.quote(item, f"{path}[{index}]")
             if quote in result:
                 raise LogicValidationError(f"{path}: повторяющаяся цитата.")
             result.append(quote)
@@ -274,15 +297,13 @@ class _Validator:
         for index, item in enumerate(arrays["unparsed"]):
             path = f"unparsed[{index}]"
             _object(item, {"text", "reason"}, path)
-            text = _string(item["text"], path + ".text", 30_000)
-            if self.source is not None and text not in self.source:
-                raise LogicValidationError(f"{path}.text: цитата отсутствует в исходном тексте.")
+            text = self.quote(item["text"], path + ".text")
             result["unparsed"].append({"text": text, "reason": _string(item["reason"], path + ".reason")})
         return result
 
 
 def validate_bundle(raw: str | dict, source: str) -> dict:
-    """Проверить структуру, замкнутость, сорта и точное наличие исходных цитат."""
+    """Проверить структуру, замкнутость, сорта и цитаты с допуском форматирования."""
     if not isinstance(source, str):
         raise LogicValidationError("source: требуется исходный текст.")
     return _Validator(source).bundle(raw)
