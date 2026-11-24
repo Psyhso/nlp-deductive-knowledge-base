@@ -125,7 +125,7 @@
   }
   async function api(path, payload) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120000);
+    const timeout = setTimeout(() => controller.abort(), payload === undefined ? 15000 : 330000);
     try {
       const options = { method: payload === undefined ? "GET" : "POST", signal: controller.signal, headers: { Accept: "application/json" } };
       if (payload !== undefined) { options.headers["Content-Type"] = "application/json"; options.body = JSON.stringify(payload); }

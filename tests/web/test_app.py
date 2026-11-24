@@ -3,16 +3,31 @@
 import asyncio
 import copy
 import json
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 import httpx
 from fastapi.testclient import TestClient
 
-from factlab.web.app import MAX_TEXT_CHARS, create_app, load_context
+from factlab.web.app import MAX_TEXT_CHARS, create_app, load_context, load_settings
 from factlab.web.llm_client import LLMError, LLMResponse, LLMSettings
 
 
 SETTINGS = LLMSettings("test-key-must-not-leak", "https://provider.invalid/v1", "test-model")
+
+
+class SettingsTests(unittest.TestCase):
+    def test_long_generation_settings_and_bounds(self):
+        env = {"LLM_MAX_OUTPUT_TOKENS": "20000", "LLM_TIMEOUT_SECONDS": "300"}
+        with patch.dict("os.environ", env, clear=True):
+            settings = load_settings(Path(__file__).with_name("missing-test.env"))
+        self.assertEqual(settings.max_output_tokens, 20000)
+        self.assertEqual(settings.timeout_seconds, 300)
+        for override in ({"LLM_MAX_OUTPUT_TOKENS": "32001"}, {"LLM_TIMEOUT_SECONDS": "301"}):
+            with self.subTest(override=override), patch.dict("os.environ", {**env, **override}, clear=True):
+                with self.assertRaises(ValueError):
+                    load_settings(Path(__file__).with_name("missing-test.env"))
 
 
 class WebAppTests(unittest.TestCase):

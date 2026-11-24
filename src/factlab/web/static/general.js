@@ -42,7 +42,7 @@
     if (state.report) { show($("g-stale")); $("g-result-panel").classList.add("is-stale"); }
   }
   async function api(path, payload) {
-    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), payload === undefined ? 15000 : 120000);
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), payload === undefined ? 15000 : 330000);
     try {
       const options = { method: payload === undefined ? "GET" : "POST", headers: { Accept: "application/json" }, signal: controller.signal };
       if (payload !== undefined) { options.headers["Content-Type"] = "application/json"; options.body = JSON.stringify(payload); }

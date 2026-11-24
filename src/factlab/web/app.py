@@ -112,12 +112,12 @@ def load_settings(env_file: Path | None = None) -> LLMSettings:
         return str(selected if selected is not None else default).strip()
 
     try:
-        limit = int(value("LLM_MAX_OUTPUT_TOKENS", "6000"))
-        timeout = float(value("LLM_TIMEOUT_SECONDS", "90"))
+        limit = int(value("LLM_MAX_OUTPUT_TOKENS", "20000"))
+        timeout = float(value("LLM_TIMEOUT_SECONDS", "300"))
     except ValueError as error:
         raise ValueError("В .env неверно заданы лимит токенов или время ожидания.") from error
-    if not 1 <= limit <= 32_000 or not 1 <= timeout <= 110:
-        raise ValueError("Лимит токенов: 1–32000; ожидание ответа: 1–110 секунд.")
+    if not 1 <= limit <= 32_000 or not 1 <= timeout <= 300:
+        raise ValueError("Лимит токенов: 1–32000; ожидание ответа: 1–300 секунд.")
     endpoint = value("LLM_BASE_URL", "https://api.openai.com/v1", "OPENAI_BASE_URL")
     try:
         parsed = urlsplit(endpoint)

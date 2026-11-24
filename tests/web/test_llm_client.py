@@ -86,7 +86,7 @@ class LLMClientTests(unittest.IsolatedAsyncioTestCase):
         body = json.loads(request.content)
         self.assertEqual(body["model"], "test-model")
         self.assertEqual(body["response_format"], {"type": "json_object"})
-        self.assertEqual(body["max_tokens"], 6000)
+        self.assertEqual(body["max_tokens"], 20000)
         self.assertNotIn("max_completion_tokens", body)
         self.assertNotIn("temperature", body)
         self.assertNotIn("reasoning_effort", body)
@@ -207,7 +207,7 @@ class LLMClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(raised.exception.code, "timeout")
         self.assert_safe(raised.exception)
         self.assertEqual(len(calls), 1)
-        self.assertEqual(calls[0].extensions["timeout"]["read"], 90.0)
+        self.assertEqual(calls[0].extensions["timeout"]["read"], 300.0)
 
     async def test_connection_error_is_sanitized(self):
         def handler(request):

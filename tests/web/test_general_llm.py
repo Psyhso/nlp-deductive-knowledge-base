@@ -123,7 +123,7 @@ class GeneralLLMTests(unittest.IsolatedAsyncioTestCase):
         )
         body = json.loads(self.requests[0].content)
         self.assertEqual(body["reasoning_effort"], "low")
-        self.assertEqual(body["max_completion_tokens"], 6000)
+        self.assertEqual(body["max_completion_tokens"], 20000)
         self.assertEqual(result.model, "overridden-model")
         self.assertEqual(result.usage["total_tokens"], 700)
         self.assertEqual(result.usage["completion_tokens_details"]["reasoning_tokens"], 150)

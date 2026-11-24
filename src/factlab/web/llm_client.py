@@ -32,8 +32,8 @@ class LLMSettings:
     api_key: str = field(repr=False)
     base_url: str
     model: str
-    max_output_tokens: int = 6000
-    timeout_seconds: float = 90.0
+    max_output_tokens: int = 20_000
+    timeout_seconds: float = 300.0
     response_format: str = "json_object"
     reasoning_effort: str | None = None
     token_limit_param: str = "max_tokens"
